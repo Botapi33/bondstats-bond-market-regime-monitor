@@ -7,7 +7,7 @@
   <style>
     :root {
       --bg: #07111f;
-      --bg-soft: #0c1728;
+      --bg-soft: #0b1627;
       --card: #0f1d31;
       --card-2: #13233a;
       --line: rgba(255,255,255,0.08);
@@ -17,12 +17,11 @@
       --accent: #8ec5ff;
       --accent-2: #b7d8ff;
       --green: #5fd39a;
-      --red: #ff7e7e;
+      --red: #ff8a8a;
       --amber: #ffd27a;
       --shadow: 0 14px 40px rgba(0,0,0,0.28);
       --radius: 20px;
-      --radius-sm: 14px;
-      --max: 1280px;
+      --max: 1320px;
     }
 
     * { box-sizing: border-box; }
@@ -30,15 +29,13 @@
     html, body {
       margin: 0;
       padding: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
       background:
         radial-gradient(circle at top left, rgba(84,133,214,0.14), transparent 32%),
         radial-gradient(circle at top right, rgba(143,191,255,0.10), transparent 24%),
         linear-gradient(180deg, #07111f 0%, #081321 100%);
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-
-    a { color: inherit; text-decoration: none; }
 
     .wrap {
       max-width: var(--max);
@@ -49,10 +46,10 @@
     .hero {
       position: relative;
       overflow: hidden;
-      background: linear-gradient(145deg, rgba(18,33,55,0.96), rgba(10,20,36,0.98));
+      background: linear-gradient(145deg, rgba(18,33,55,0.97), rgba(10,20,36,0.98));
       border: 1px solid var(--line);
       border-radius: 28px;
-      padding: 30px 28px 26px;
+      padding: 32px 30px 28px;
       box-shadow: var(--shadow);
       margin-bottom: 22px;
     }
@@ -60,10 +57,11 @@
     .hero::before {
       content: "";
       position: absolute;
-      inset: auto -80px -100px auto;
+      right: -80px;
+      bottom: -110px;
       width: 320px;
       height: 320px;
-      background: radial-gradient(circle, rgba(142,197,255,0.20), transparent 65%);
+      background: radial-gradient(circle, rgba(142,197,255,0.18), transparent 65%);
       pointer-events: none;
     }
 
@@ -77,7 +75,7 @@
       border: 1px solid var(--line);
       color: var(--accent-2);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       margin-bottom: 14px;
@@ -85,14 +83,14 @@
 
     h1 {
       margin: 0 0 10px;
-      font-size: clamp(32px, 5vw, 56px);
-      line-height: 1.04;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.03;
       letter-spacing: -0.03em;
     }
 
     .subline {
       margin: 0;
-      max-width: 900px;
+      max-width: 920px;
       color: var(--muted);
       font-size: 16px;
       line-height: 1.7;
@@ -100,7 +98,7 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
+      grid-template-columns: 1.3fr 0.7fr;
       gap: 18px;
       margin-top: 24px;
     }
@@ -118,7 +116,7 @@
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 12px;
     }
 
@@ -133,13 +131,12 @@
     .state-pill {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
       min-height: 40px;
       padding: 10px 14px;
       border-radius: 999px;
       border: 1px solid var(--line);
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.02em;
     }
 
@@ -148,9 +145,10 @@
     .state-pill.rally { background: rgba(142,197,255,0.12); color: var(--accent); }
     .state-pill.diverging { background: rgba(255,210,122,0.12); color: var(--amber); }
     .state-pill.crosscurrents { background: rgba(183,216,255,0.12); color: var(--accent-2); }
+    .state-pill.error { background: rgba(255,126,126,0.12); color: #ffd5d5; }
 
     .state-title {
-      font-size: clamp(24px, 3.4vw, 40px);
+      font-size: clamp(26px, 3.4vw, 42px);
       font-weight: 800;
       line-height: 1.08;
       margin: 0 0 8px;
@@ -189,6 +187,7 @@
       font-weight: 700;
       font-size: 14px;
       color: var(--text);
+      text-align: right;
     }
 
     .kpi-grid {
@@ -211,7 +210,7 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--soft);
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 12px;
     }
 
@@ -302,7 +301,7 @@
     }
 
     .chg {
-      min-width: 84px;
+      min-width: 90px;
       text-align: right;
       font-weight: 800;
       font-size: 15px;
@@ -313,9 +312,17 @@
     .neg { color: var(--green); }
     .flat { color: var(--muted); }
 
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.02);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 920px;
     }
 
     thead th {
@@ -340,26 +347,12 @@
       background: rgba(255,255,255,0.025);
     }
 
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.05);
-      background: rgba(255,255,255,0.02);
-    }
-
     .country {
       font-weight: 700;
     }
 
     .muted {
       color: var(--soft);
-    }
-
-    .footer-note {
-      margin-top: 16px;
-      color: var(--soft);
-      font-size: 13px;
-      line-height: 1.6;
     }
 
     .loading, .error {
@@ -377,7 +370,14 @@
       border-color: rgba(255,126,126,0.18);
     }
 
-    @media (max-width: 1100px) {
+    .footer-note {
+      margin-top: 16px;
+      color: var(--soft);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1120px) {
       .hero-grid,
       .kpi-grid,
       .grid-2 {
@@ -401,19 +401,17 @@
       <h1>Bond Market Regime Monitor</h1>
       <p class="subline">
         A live institutional-style monitor of the global sovereign bond market, designed to classify regime,
-        track cross-market dispersion, and highlight where rates are moving together — or not.
+        track dispersion, and highlight where rates are moving together — or not.
       </p>
 
       <div class="hero-grid">
         <div class="panel">
           <div class="panel-label">Current Regime</div>
           <div class="state-row">
-            <div id="statePill" class="state-pill">Loading...</div>
+            <div id="statePill" class="state-pill crosscurrents">Loading...</div>
           </div>
           <h2 id="stateTitle" class="state-title">Loading market state...</h2>
-          <p id="stateText" class="state-text">
-            Fetching latest global bond market data.
-          </p>
+          <p id="stateText" class="state-text">Fetching latest BondStats market data.</p>
         </div>
 
         <div class="panel">
@@ -446,16 +444,19 @@
         <div id="avgYield" class="kpi-value">—</div>
         <div class="kpi-note">Cross-market average of currently tracked benchmark sovereign yields.</div>
       </div>
+
       <div class="kpi">
         <div class="kpi-label">Average Daily Move</div>
         <div id="avgMove" class="kpi-value">—</div>
         <div class="kpi-note">Mean daily move across all markets in basis points.</div>
       </div>
+
       <div class="kpi">
         <div class="kpi-label">Dispersion</div>
         <div id="dispersion" class="kpi-value">—</div>
         <div class="kpi-note">Cross-market standard deviation of daily moves in basis points.</div>
       </div>
+
       <div class="kpi">
         <div class="kpi-label">Market Breadth</div>
         <div id="breadth" class="kpi-value">—</div>
@@ -511,21 +512,20 @@
           </thead>
           <tbody id="marketTable">
             <tr>
-              <td colspan="6" class="muted">Loading market data...</td>
+              <td colspan="6" class="muted">Loading live market data...</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div class="footer-note" id="footerNote">
-        This monitor classifies the current global bond regime using live sovereign yield data, cross-market breadth,
-        and dispersion in daily moves.
+        This monitor classifies the current global bond regime using live sovereign yield data, cross-market breadth, and dispersion in daily moves.
       </div>
     </section>
   </div>
 
   <script>
-    const JSON_URL = "https://www.bondstats.org/data/global_yields.json";
+    const JSON_URL = "https://botapi33.github.io/bondstats-global-yields/global_yields.json";
 
     const fallbackRegions = {
       "United States": "North America",
@@ -602,28 +602,23 @@
       let key = "stable";
       let label = "Stable Global Rates";
       let text = "Global sovereign yields are relatively contained, with limited directional pressure and low cross-market dispersion.";
-      let confidence = "Moderate";
 
       if (dispersion >= 5 && dominantShare < 0.62) {
         key = "diverging";
         label = "Diverging Markets";
         text = "Cross-market bond moves are increasingly uneven, with regional and country-level divergence outweighing any single global direction.";
-        confidence = "High";
       } else if (avg >= 2.5 && dominantShare >= 0.62) {
         key = "selloff";
         label = "Broad Selloff";
         text = "Yields are moving higher across a large share of tracked markets, pointing to synchronized upward pressure in global sovereign rates.";
-        confidence = dominantShare >= 0.75 ? "High" : "Moderate";
       } else if (avg <= -2.5 && dominantShare >= 0.62) {
         key = "rally";
         label = "Broad Rally";
-        text = "Yields are falling across a broad set of sovereign markets, suggesting a coordinated risk-off or duration-supportive move.";
-        confidence = dominantShare >= 0.75 ? "High" : "Moderate";
+        text = "Yields are falling across a broad set of sovereign markets, suggesting a coordinated duration-supportive move.";
       } else if (dispersion >= 3.2) {
         key = "crosscurrents";
         label = "High-Volatility Crosscurrents";
         text = "Markets are experiencing elevated rate volatility, but without a fully unified global direction. Local drivers appear to dominate.";
-        confidence = "Moderate";
       }
 
       return {
@@ -632,15 +627,14 @@
         text,
         avg,
         dispersion,
-        dominantShare,
-        positive,
-        negative
+        dominantShare
       };
     }
 
     function directionBias(changes) {
-      const positive = changes.filter(c => c > 0.75).length;
-      const negative = changes.filter(c => c < -0.75).length;
+      const bpMoves = changes.map(c => c * 100);
+      const positive = bpMoves.filter(c => c > 0.75).length;
+      const negative = bpMoves.filter(c => c < -0.75).length;
 
       if (positive > negative && positive >= 3) return "Higher yields";
       if (negative > positive && negative >= 3) return "Lower yields";
@@ -648,9 +642,10 @@
     }
 
     function normalizeData(json) {
-      const source = json?.data || json?.countries || {};
-      const entries = Object.values(source)
-        .filter(item => item && typeof item.value === "number" && typeof item.change === "number")
+      const source = json?.data || json?.countries || json || {};
+
+      return Object.values(source)
+        .filter(item => item && typeof item === "object")
         .map(item => ({
           label: item.label || "Unknown",
           value: Number(item.value),
@@ -658,13 +653,13 @@
           date: item.date || "—",
           frequency: item.frequency || "Daily",
           region: item.region || fallbackRegions[item.label] || "Global"
-        }));
-
-      return entries;
+        }))
+        .filter(item => !Number.isNaN(item.value) && !Number.isNaN(item.change));
     }
 
     function renderTopMovers(data) {
       const container = document.getElementById("topMovers");
+
       const top = [...data]
         .sort((a, b) => Math.abs(b.change) - Math.abs(a.change))
         .slice(0, 6);
@@ -693,13 +688,13 @@
         grouped[item.region].push(item);
       });
 
-      const regionRows = Object.entries(grouped).map(([region, items]) => {
+      const rows = Object.entries(grouped).map(([region, items]) => {
         const avgYield = mean(items.map(i => i.value));
         const avgMove = mean(items.map(i => i.change)) * 100;
-        let signal = "Mixed";
+
+        let signal = "Stable / mixed";
         if (avgMove >= 1.5) signal = "Selling pressure";
         else if (avgMove <= -1.5) signal = "Rallying";
-        else signal = "Stable / mixed";
 
         const cls = avgMove > 0.5 ? "pos" : avgMove < -0.5 ? "neg" : "flat";
 
@@ -717,11 +712,12 @@
         `;
       });
 
-      container.innerHTML = regionRows.join("");
+      container.innerHTML = rows.join("");
     }
 
     function renderTable(data) {
       const tbody = document.getElementById("marketTable");
+
       const sorted = [...data].sort((a, b) => b.value - a.value);
 
       tbody.innerHTML = sorted.map(item => {
@@ -760,22 +756,46 @@
       document.getElementById("stateText").textContent = regime.text;
 
       document.getElementById("lastUpdated").textContent =
-        json?.meta?.lastUpdated ? new Date(json.meta.lastUpdated).toLocaleString() : "—";
+        json?.meta?.lastUpdated
+          ? new Date(json.meta.lastUpdated).toLocaleString()
+          : "Live";
 
       document.getElementById("marketCount").textContent = String(data.length);
-      document.getElementById("directionBias").textContent = directionBias(data.map(d => d.change * 100));
+      document.getElementById("directionBias").textContent = directionBias(data.map(d => d.change));
       document.getElementById("regimeConfidence").textContent =
-        regime.dominantShare >= 0.75 ? "High" : regime.dominantShare >= 0.60 ? "Moderate" : "Balanced";
+        regime.dominantShare >= 0.75 ? "High" :
+        regime.dominantShare >= 0.60 ? "Moderate" : "Balanced";
+    }
+
+    function renderError(message) {
+      const pill = document.getElementById("statePill");
+      pill.className = "state-pill error";
+      pill.textContent = "Data Error";
+
+      document.getElementById("stateTitle").textContent = "Unable to load live market data";
+      document.getElementById("stateText").textContent = message;
+
+      document.getElementById("topMovers").innerHTML =
+        `<div class="error">Failed to load top movers. ${message}</div>`;
+
+      document.getElementById("regionalView").innerHTML =
+        `<div class="error">Failed to load regional data. ${message}</div>`;
+
+      document.getElementById("marketTable").innerHTML =
+        `<tr><td colspan="6" class="error">Failed to load market table. ${message}</td></tr>`;
     }
 
     async function loadData() {
       try {
         const res = await fetch(JSON_URL, { cache: "no-store" });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
 
+        const json = await res.json();
         const data = normalizeData(json);
-        if (!data.length) throw new Error("No usable market records found in JSON.");
+
+        if (!data.length) {
+          throw new Error("No usable market records found in live JSON.");
+        }
 
         const regime = classifyRegime(data.map(d => d.change));
 
@@ -785,21 +805,14 @@
         renderRegions(data);
         renderTable(data);
 
-        document.getElementById("footerNote").textContent =
-          `Live regime classification based on ${data.length} benchmark sovereign markets. Average move: ${(mean(data.map(d => d.change)) * 100).toFixed(1)} bp. Dispersion: ${stdDev(data.map(d => d.change * 100)).toFixed(1)} bp.`;
-      } catch (err) {
-        document.getElementById("statePill").textContent = "Data Error";
-        document.getElementById("statePill").className = "state-pill crosscurrents";
-        document.getElementById("stateTitle").textContent = "Unable to load live market data";
-        document.getElementById("stateText").textContent =
-          "This monitor could not retrieve the latest BondStats JSON feed. Please check the data endpoint or try again shortly.";
+        const avgMove = mean(data.map(d => d.change)) * 100;
+        const dispersion = stdDev(data.map(d => d.change * 100));
 
-        document.getElementById("topMovers").innerHTML =
-          `<div class="error">Failed to load top movers. ${err.message}</div>`;
-        document.getElementById("regionalView").innerHTML =
-          `<div class="error">Failed to load regional data. ${err.message}</div>`;
-        document.getElementById("marketTable").innerHTML =
-          `<tr><td colspan="6" class="error">Failed to load market table. ${err.message}</td></tr>`;
+        document.getElementById("footerNote").textContent =
+          `Live regime classification based on ${data.length} benchmark sovereign markets. Average move: ${avgMove > 0 ? "+" : ""}${avgMove.toFixed(1)} bp. Dispersion: ${dispersion.toFixed(1)} bp.`;
+      } catch (err) {
+        console.error("Bond Market Regime Monitor load error:", err);
+        renderError(err.message || "Unknown load error.");
       }
     }
 

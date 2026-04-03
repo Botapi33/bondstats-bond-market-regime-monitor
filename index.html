@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bond Market Regime Monitor | BondStats</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-soft: #0c1728;
+      --card: #0f1d31;
+      --card-2: #13233a;
+      --line: rgba(255,255,255,0.08);
+      --text: #f4f7fb;
+      --muted: #9db0c9;
+      --soft: #7f93ad;
+      --accent: #8ec5ff;
+      --accent-2: #b7d8ff;
+      --green: #5fd39a;
+      --red: #ff7e7e;
+      --amber: #ffd27a;
+      --shadow: 0 14px 40px rgba(0,0,0,0.28);
+      --radius: 20px;
+      --radius-sm: 14px;
+      --max: 1280px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background:
+        radial-gradient(circle at top left, rgba(84,133,214,0.14), transparent 32%),
+        radial-gradient(circle at top right, rgba(143,191,255,0.10), transparent 24%),
+        linear-gradient(180deg, #07111f 0%, #081321 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 28px 20px 56px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(145deg, rgba(18,33,55,0.96), rgba(10,20,36,0.98));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 30px 28px 26px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: auto -80px -100px auto;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(142,197,255,0.20), transparent 65%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      color: var(--accent-2);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+    }
+
+    .subline {
+      margin: 0;
+      max-width: 900px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      min-height: 100%;
+    }
+
+    .panel-label {
+      color: var(--soft);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .state-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .state-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .state-pill.stable { background: rgba(95,211,154,0.10); color: var(--green); }
+    .state-pill.selloff { background: rgba(255,126,126,0.10); color: var(--red); }
+    .state-pill.rally { background: rgba(142,197,255,0.12); color: var(--accent); }
+    .state-pill.diverging { background: rgba(255,210,122,0.12); color: var(--amber); }
+    .state-pill.crosscurrents { background: rgba(183,216,255,0.12); color: var(--accent-2); }
+
+    .state-title {
+      font-size: clamp(24px, 3.4vw, 40px);
+      font-weight: 800;
+      line-height: 1.08;
+      margin: 0 0 8px;
+      letter-spacing: -0.025em;
+    }
+
+    .state-text {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .mini-meta {
+      display: grid;
+      gap: 10px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .meta-item span:first-child {
+      color: var(--soft);
+      font-size: 13px;
+    }
+
+    .meta-item span:last-child {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 22px 0;
+    }
+
+    .kpi {
+      background: linear-gradient(180deg, rgba(17,29,49,0.92), rgba(12,22,38,0.95));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--soft);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .kpi-value {
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .kpi-note {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section {
+      background: linear-gradient(180deg, rgba(17,29,49,0.92), rgba(12,22,38,0.95));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-note {
+      color: var(--soft);
+      font-size: 13px;
+      margin: 0;
+    }
+
+    .mover-list, .region-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .row-card {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .row-main {
+      min-width: 0;
+    }
+
+    .row-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .row-sub {
+      color: var(--soft);
+      font-size: 13px;
+    }
+
+    .yield {
+      font-weight: 800;
+      font-size: 16px;
+      white-space: nowrap;
+    }
+
+    .chg {
+      min-width: 84px;
+      text-align: right;
+      font-weight: 800;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+
+    .pos { color: var(--red); }
+    .neg { color: var(--green); }
+    .flat { color: var(--muted); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 14px 14px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--soft);
+      border-bottom: 1px solid var(--line);
+    }
+
+    tbody td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 14px;
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,0.025);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .country {
+      font-weight: 700;
+    }
+
+    .muted {
+      color: var(--soft);
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--soft);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .loading, .error {
+      padding: 18px;
+      border-radius: 16px;
+      font-size: 15px;
+      line-height: 1.6;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .error {
+      color: #ffd5d5;
+      background: rgba(255,126,126,0.08);
+      border-color: rgba(255,126,126,0.18);
+    }
+
+    @media (max-width: 1100px) {
+      .hero-grid,
+      .kpi-grid,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 16px 14px 40px; }
+      .hero { padding: 22px 18px 18px; border-radius: 22px; }
+      .panel, .section, .kpi { padding: 18px; border-radius: 18px; }
+      .row-card { grid-template-columns: 1fr auto; }
+      .chg { grid-column: 2; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">BondStats · Global Market Intelligence</div>
+      <h1>Bond Market Regime Monitor</h1>
+      <p class="subline">
+        A live institutional-style monitor of the global sovereign bond market, designed to classify regime,
+        track cross-market dispersion, and highlight where rates are moving together — or not.
+      </p>
+
+      <div class="hero-grid">
+        <div class="panel">
+          <div class="panel-label">Current Regime</div>
+          <div class="state-row">
+            <div id="statePill" class="state-pill">Loading...</div>
+          </div>
+          <h2 id="stateTitle" class="state-title">Loading market state...</h2>
+          <p id="stateText" class="state-text">
+            Fetching latest global bond market data.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-label">Live Metadata</div>
+          <div class="mini-meta">
+            <div class="meta-item">
+              <span>Last Updated</span>
+              <span id="lastUpdated">—</span>
+            </div>
+            <div class="meta-item">
+              <span>Markets Covered</span>
+              <span id="marketCount">—</span>
+            </div>
+            <div class="meta-item">
+              <span>Direction Bias</span>
+              <span id="directionBias">—</span>
+            </div>
+            <div class="meta-item">
+              <span>Regime Confidence</span>
+              <span id="regimeConfidence">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Average 10Y Yield</div>
+        <div id="avgYield" class="kpi-value">—</div>
+        <div class="kpi-note">Cross-market average of currently tracked benchmark sovereign yields.</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Average Daily Move</div>
+        <div id="avgMove" class="kpi-value">—</div>
+        <div class="kpi-note">Mean daily move across all markets in basis points.</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Dispersion</div>
+        <div id="dispersion" class="kpi-value">—</div>
+        <div class="kpi-note">Cross-market standard deviation of daily moves in basis points.</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Market Breadth</div>
+        <div id="breadth" class="kpi-value">—</div>
+        <div class="kpi-note">Share of markets moving in the dominant direction.</div>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <h3 class="section-title">Top Movers</h3>
+            <p class="section-note">Largest daily moves across tracked sovereign markets</p>
+          </div>
+        </div>
+        <div id="topMovers" class="mover-list">
+          <div class="loading">Loading top movers...</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <h3 class="section-title">Regional Regime View</h3>
+            <p class="section-note">Average move, yield level, and direction across regions</p>
+          </div>
+        </div>
+        <div id="regionalView" class="region-list">
+          <div class="loading">Loading regional data...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h3 class="section-title">Live Market Table</h3>
+          <p class="section-note">Benchmark sovereign yields with daily moves and regime context</p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Region</th>
+              <th>Yield</th>
+              <th>Daily Move</th>
+              <th>Date</th>
+              <th>Regime Signal</th>
+            </tr>
+          </thead>
+          <tbody id="marketTable">
+            <tr>
+              <td colspan="6" class="muted">Loading market data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer-note" id="footerNote">
+        This monitor classifies the current global bond regime using live sovereign yield data, cross-market breadth,
+        and dispersion in daily moves.
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const JSON_URL = "https://www.bondstats.org/data/global_yields.json";
+
+    const fallbackRegions = {
+      "United States": "North America",
+      "Canada": "North America",
+      "Mexico": "Latin America",
+      "Brazil": "Latin America",
+      "Argentina": "Latin America",
+      "Chile": "Latin America",
+      "Colombia": "Latin America",
+      "Peru": "Latin America",
+      "Germany": "Europe",
+      "France": "Europe",
+      "United Kingdom": "Europe",
+      "Italy": "Europe",
+      "Spain": "Europe",
+      "Netherlands": "Europe",
+      "Switzerland": "Europe",
+      "Sweden": "Europe",
+      "Norway": "Europe",
+      "Japan": "Asia-Pacific",
+      "China": "Asia-Pacific",
+      "South Korea": "Asia-Pacific",
+      "Australia": "Asia-Pacific",
+      "New Zealand": "Asia-Pacific",
+      "India": "Asia-Pacific",
+      "Indonesia": "Asia-Pacific",
+      "Malaysia": "Asia-Pacific",
+      "Singapore": "Asia-Pacific",
+      "South Africa": "Middle East & Africa",
+      "Israel": "Middle East & Africa",
+      "Saudi Arabia": "Middle East & Africa",
+      "Turkey": "Middle East & Africa"
+    };
+
+    function formatPct(value, digits = 2) {
+      return Number(value).toFixed(digits) + "%";
+    }
+
+    function formatBp(changeDecimal) {
+      return (changeDecimal * 100).toFixed(1) + " bp";
+    }
+
+    function mean(arr) {
+      if (!arr.length) return 0;
+      return arr.reduce((a, b) => a + b, 0) / arr.length;
+    }
+
+    function stdDev(arr) {
+      if (!arr.length) return 0;
+      const m = mean(arr);
+      const variance = mean(arr.map(x => (x - m) ** 2));
+      return Math.sqrt(variance);
+    }
+
+    function detectSignal(change) {
+      const bp = change * 100;
+      if (bp >= 5) return "Strong selloff";
+      if (bp >= 1.5) return "Selloff";
+      if (bp <= -5) return "Strong rally";
+      if (bp <= -1.5) return "Rally";
+      return "Range-bound";
+    }
+
+    function classifyRegime(changes) {
+      const bpMoves = changes.map(c => c * 100);
+      const avg = mean(bpMoves);
+      const dispersion = stdDev(bpMoves);
+
+      const positive = bpMoves.filter(v => v > 0.75).length;
+      const negative = bpMoves.filter(v => v < -0.75).length;
+      const total = bpMoves.length || 1;
+      const dominantShare = Math.max(positive, negative) / total;
+
+      let key = "stable";
+      let label = "Stable Global Rates";
+      let text = "Global sovereign yields are relatively contained, with limited directional pressure and low cross-market dispersion.";
+      let confidence = "Moderate";
+
+      if (dispersion >= 5 && dominantShare < 0.62) {
+        key = "diverging";
+        label = "Diverging Markets";
+        text = "Cross-market bond moves are increasingly uneven, with regional and country-level divergence outweighing any single global direction.";
+        confidence = "High";
+      } else if (avg >= 2.5 && dominantShare >= 0.62) {
+        key = "selloff";
+        label = "Broad Selloff";
+        text = "Yields are moving higher across a large share of tracked markets, pointing to synchronized upward pressure in global sovereign rates.";
+        confidence = dominantShare >= 0.75 ? "High" : "Moderate";
+      } else if (avg <= -2.5 && dominantShare >= 0.62) {
+        key = "rally";
+        label = "Broad Rally";
+        text = "Yields are falling across a broad set of sovereign markets, suggesting a coordinated risk-off or duration-supportive move.";
+        confidence = dominantShare >= 0.75 ? "High" : "Moderate";
+      } else if (dispersion >= 3.2) {
+        key = "crosscurrents";
+        label = "High-Volatility Crosscurrents";
+        text = "Markets are experiencing elevated rate volatility, but without a fully unified global direction. Local drivers appear to dominate.";
+        confidence = "Moderate";
+      }
+
+      return {
+        key,
+        label,
+        text,
+        avg,
+        dispersion,
+        dominantShare,
+        positive,
+        negative
+      };
+    }
+
+    function directionBias(changes) {
+      const positive = changes.filter(c => c > 0.75).length;
+      const negative = changes.filter(c => c < -0.75).length;
+
+      if (positive > negative && positive >= 3) return "Higher yields";
+      if (negative > positive && negative >= 3) return "Lower yields";
+      return "Mixed";
+    }
+
+    function normalizeData(json) {
+      const source = json?.data || json?.countries || {};
+      const entries = Object.values(source)
+        .filter(item => item && typeof item.value === "number" && typeof item.change === "number")
+        .map(item => ({
+          label: item.label || "Unknown",
+          value: Number(item.value),
+          change: Number(item.change),
+          date: item.date || "—",
+          frequency: item.frequency || "Daily",
+          region: item.region || fallbackRegions[item.label] || "Global"
+        }));
+
+      return entries;
+    }
+
+    function renderTopMovers(data) {
+      const container = document.getElementById("topMovers");
+      const top = [...data]
+        .sort((a, b) => Math.abs(b.change) - Math.abs(a.change))
+        .slice(0, 6);
+
+      container.innerHTML = top.map(item => {
+        const cls = item.change > 0 ? "pos" : item.change < 0 ? "neg" : "flat";
+        return `
+          <div class="row-card">
+            <div class="row-main">
+              <div class="row-title">${item.label}</div>
+              <div class="row-sub">${item.region}</div>
+            </div>
+            <div class="yield">${formatPct(item.value)}</div>
+            <div class="chg ${cls}">${item.change > 0 ? "+" : ""}${formatBp(item.change)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderRegions(data) {
+      const container = document.getElementById("regionalView");
+      const grouped = {};
+
+      data.forEach(item => {
+        if (!grouped[item.region]) grouped[item.region] = [];
+        grouped[item.region].push(item);
+      });
+
+      const regionRows = Object.entries(grouped).map(([region, items]) => {
+        const avgYield = mean(items.map(i => i.value));
+        const avgMove = mean(items.map(i => i.change)) * 100;
+        let signal = "Mixed";
+        if (avgMove >= 1.5) signal = "Selling pressure";
+        else if (avgMove <= -1.5) signal = "Rallying";
+        else signal = "Stable / mixed";
+
+        const cls = avgMove > 0.5 ? "pos" : avgMove < -0.5 ? "neg" : "flat";
+
+        return `
+          <div class="row-card">
+            <div class="row-main">
+              <div class="row-title">${region}</div>
+              <div class="row-sub">${items.length} markets tracked</div>
+            </div>
+            <div class="yield">${avgYield.toFixed(2)}%</div>
+            <div class="chg ${cls}">
+              ${avgMove > 0 ? "+" : ""}${avgMove.toFixed(1)} bp · ${signal}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = regionRows.join("");
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById("marketTable");
+      const sorted = [...data].sort((a, b) => b.value - a.value);
+
+      tbody.innerHTML = sorted.map(item => {
+        const cls = item.change > 0 ? "pos" : item.change < 0 ? "neg" : "flat";
+        return `
+          <tr>
+            <td class="country">${item.label}</td>
+            <td class="muted">${item.region}</td>
+            <td>${formatPct(item.value)}</td>
+            <td class="${cls}">${item.change > 0 ? "+" : ""}${formatBp(item.change)}</td>
+            <td class="muted">${item.date}</td>
+            <td>${detectSignal(item.change)}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function updateKpis(data, regime) {
+      const avgYield = mean(data.map(d => d.value));
+      const avgMoveBp = mean(data.map(d => d.change)) * 100;
+      const dispersionBp = stdDev(data.map(d => d.change * 100));
+      const breadthPct = regime.dominantShare * 100;
+
+      document.getElementById("avgYield").textContent = avgYield.toFixed(2) + "%";
+      document.getElementById("avgMove").textContent = (avgMoveBp > 0 ? "+" : "") + avgMoveBp.toFixed(1) + " bp";
+      document.getElementById("dispersion").textContent = dispersionBp.toFixed(1) + " bp";
+      document.getElementById("breadth").textContent = breadthPct.toFixed(0) + "%";
+    }
+
+    function updateHero(json, data, regime) {
+      const pill = document.getElementById("statePill");
+      pill.className = `state-pill ${regime.key}`;
+      pill.textContent = regime.label;
+
+      document.getElementById("stateTitle").textContent = regime.label;
+      document.getElementById("stateText").textContent = regime.text;
+
+      document.getElementById("lastUpdated").textContent =
+        json?.meta?.lastUpdated ? new Date(json.meta.lastUpdated).toLocaleString() : "—";
+
+      document.getElementById("marketCount").textContent = String(data.length);
+      document.getElementById("directionBias").textContent = directionBias(data.map(d => d.change * 100));
+      document.getElementById("regimeConfidence").textContent =
+        regime.dominantShare >= 0.75 ? "High" : regime.dominantShare >= 0.60 ? "Moderate" : "Balanced";
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch(JSON_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+
+        const data = normalizeData(json);
+        if (!data.length) throw new Error("No usable market records found in JSON.");
+
+        const regime = classifyRegime(data.map(d => d.change));
+
+        updateHero(json, data, regime);
+        updateKpis(data, regime);
+        renderTopMovers(data);
+        renderRegions(data);
+        renderTable(data);
+
+        document.getElementById("footerNote").textContent =
+          `Live regime classification based on ${data.length} benchmark sovereign markets. Average move: ${(mean(data.map(d => d.change)) * 100).toFixed(1)} bp. Dispersion: ${stdDev(data.map(d => d.change * 100)).toFixed(1)} bp.`;
+      } catch (err) {
+        document.getElementById("statePill").textContent = "Data Error";
+        document.getElementById("statePill").className = "state-pill crosscurrents";
+        document.getElementById("stateTitle").textContent = "Unable to load live market data";
+        document.getElementById("stateText").textContent =
+          "This monitor could not retrieve the latest BondStats JSON feed. Please check the data endpoint or try again shortly.";
+
+        document.getElementById("topMovers").innerHTML =
+          `<div class="error">Failed to load top movers. ${err.message}</div>`;
+        document.getElementById("regionalView").innerHTML =
+          `<div class="error">Failed to load regional data. ${err.message}</div>`;
+        document.getElementById("marketTable").innerHTML =
+          `<tr><td colspan="6" class="error">Failed to load market table. ${err.message}</td></tr>`;
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
